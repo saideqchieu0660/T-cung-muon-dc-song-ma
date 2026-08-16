@@ -24,6 +24,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { store, Deck } from "../lib/store";
 import { cn } from "../lib/utils";
 import { isFeatureEnabled } from "../features.config";
+import { VibeStudyEntryModal } from "./VibeStudyEntryModal";
 
 interface VibeSidebarProps {
   isOpen: boolean;
@@ -52,6 +53,8 @@ export const VibeSidebar: React.FC<VibeSidebarProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [studyEntryDeck, setStudyEntryDeck] = useState<Deck | null>(null);
+  
   const [activeTab, setActiveTabState] = useState<string>(() => {
     return sessionStorage.getItem("student_dashboard_tab") || "all_sets";
   });
@@ -313,7 +316,7 @@ export const VibeSidebar: React.FC<VibeSidebarProps> = ({
                                         key={deck.id}
                                         onClick={() => {
                                           handleSelectTab("all_sets");
-                                          navigate(`/study/${deck.id}`);
+                                          setStudyEntryDeck(deck);
                                         }}
                                         className="w-full flex items-center justify-between px-2 py-1 rounded-md text-[11px] text-zinc-600 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-orange-300 hover:bg-orange-500/5 transition group text-left"
                                       >

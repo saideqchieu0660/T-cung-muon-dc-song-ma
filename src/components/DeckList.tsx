@@ -9,7 +9,6 @@ import { cn } from '../lib/utils';
 import { downloadCourseForOffline, isDeckSavedOffline, getAllOfflineDecks } from '../utils/offlineDb';
 import { isFeatureEnabled } from '../features.config';
 import { Layers } from 'lucide-react';
-import { VibeBackupRestoreX } from '../vibe-sandbox/VibeBackupRestoreX';
 import { VibeStudyEntryModal } from '../vibe-sandbox/VibeStudyEntryModal';
 import { VibeDeckStatsBanner } from '../vibe-sandbox/VibeDeckStatsBanner';
 import { VibeSmartFilters, VibeFilterType } from '../vibe-sandbox/VibeSmartFilters';
@@ -929,7 +928,7 @@ const safeSetItem = (key: string, value: string) => {
                       const isOfflineUnavailable = !isOnline && !offlineDeckIds.has(deck.id);
 
                       return (
-                        <TiltCard key={`${deck.id || "deck"}-${idx}`} delayIdx={idx} cards={deck.cards} onClick={() => navigate(`/study/${deck.id}`)} className={cn(
+                        <TiltCard key={`${deck.id || "deck"}-${idx}`} delayIdx={idx} cards={deck.cards} onClick={() => setStudyEntryDeck(deck as any)} className={cn(
                           "shrink-0 h-auto",
                           isFeatureEnabled("vibe-study-nav") ? "w-full" : "w-[85vw] sm:w-[380px] snap-start",
                           isOfflineUnavailable && "opacity-40 grayscale pointer-events-none",
@@ -1034,22 +1033,6 @@ const safeSetItem = (key: string, value: string) => {
                                       <FileJson className="w-4 h-4" />
                                       Tải JSON (Toàn bộ)
                                     </button>
-                                    <button
-                                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeckMenu(null); handleDownloadJson(deck, true); }}
-                                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-purple-600 transition-colors"
-                                    >
-                                      <FileJson className="w-4 h-4" />
-                                      Tải JSON (Thẻ X)
-                                    </button>
-                                    {isFeatureEnabled('ENABLE_VIBE_BACKUP_RESTORE_X') && !deck.id.startsWith("remind-later-") && (
-                                      <div className="px-4 py-2" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                                        <VibeBackupRestoreX
-                                           deckId={deck.id}
-                                          deckTitle={deck.title}
-                                          cards={deck.cards}
-                                        />
-                                      </div>
-                                    )}
                                   </div>
                                 </>
                               )}
@@ -1089,7 +1072,7 @@ const safeSetItem = (key: string, value: string) => {
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        navigate(`/study/${deck.id}`);
+                                        setStudyEntryDeck(deck as any);
                                       }}
                                       className="w-full py-2 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
                                     >
@@ -1331,22 +1314,6 @@ const safeSetItem = (key: string, value: string) => {
                                 <FileJson className="w-4 h-4" />
                                 Tải JSON (Toàn bộ)
                               </button>
-                              <button
-                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeckMenu(null); handleDownloadJson(deck, true); }}
-                                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-purple-600 transition-colors"
-                              >
-                                <FileJson className="w-4 h-4" />
-                                Tải JSON (Thẻ X)
-                              </button>
-                              {isFeatureEnabled('ENABLE_VIBE_BACKUP_RESTORE_X') && !deck.id.startsWith("remind-later-") && (
-                                <div className="px-4 py-2" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                                  <VibeBackupRestoreX
-                                     deckId={deck.id}
-                                    deckTitle={deck.title}
-                                    cards={deck.cards}
-                                  />
-                                </div>
-                              )}
                             </div>
                           </>
                         )}
@@ -1386,7 +1353,7 @@ const safeSetItem = (key: string, value: string) => {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  navigate(`/study/${deck.id}`);
+                                  setStudyEntryDeck(deck as any);
                                 }}
                                 className="w-full py-2 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer hover:scale-[1.02]"
                               >

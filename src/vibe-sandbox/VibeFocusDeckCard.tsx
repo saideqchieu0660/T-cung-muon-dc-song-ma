@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, Play, AlertCircle, Clock } from 'lucide-react';
 import { Deck } from '../lib/store';
 import { useNavigate } from 'react-router-dom';
+import { VibeStudyEntryModal } from './VibeStudyEntryModal';
 
 export const VibeFocusDeckCard: React.FC<{ decks: Deck[] }> = ({ decks }) => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const focusDeck = useMemo(() => {
     let mostDueDeck: (Deck & { dueCount: number }) | null = null;
@@ -55,7 +57,7 @@ export const VibeFocusDeckCard: React.FC<{ decks: Deck[] }> = ({ decks }) => {
         </div>
 
         <button
-          onClick={() => navigate(`/study/${focusDeck.id}`)}
+          onClick={() => setIsModalOpen(true)}
           className="shrink-0 flex items-center gap-2 px-8 py-4 bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all active:scale-95 text-lg"
         >
           <Play className="w-5 h-5 fill-current" />

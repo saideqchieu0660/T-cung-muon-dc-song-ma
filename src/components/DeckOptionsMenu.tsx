@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { MoreVertical, Pin, PinOff, Edit3, Share2, DownloadCloud, FileJson, Layers, Check } from 'lucide-react';
+import { MoreVertical, Pin, PinOff, Edit3, Share2, DownloadCloud, FileJson, Layers, Check, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Deck, store } from '../lib/store';
 import { downloadCourseForOffline, getAllOfflineDecks } from '../utils/offlineDb';
 import { isFeatureEnabled } from '../features.config';
-import { VibeBackupRestoreX } from '../vibe-sandbox/VibeBackupRestoreX';
+import { set } from 'idb-keyval';
 
 export const DeckOptionsMenu = ({ 
   deck, 
@@ -135,6 +135,31 @@ export const DeckOptionsMenu = ({
     toast.success(`Đã tải xuống ${cardsToDownload.length} thẻ.`);
   };
 
+  const handleBackup = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowDeckMenu(false);
+    
+    try {
+      const remindIds = JSON.parse(localStorage.getItem("remind_later_items") || "[]");
+      const weakCardIds = (deck.cards || [])
+        .filter(c => Boolean(c.isHard) || remindIds.includes(c.id))
+        .map(c => c.id);
+
+      const backupKey = `vibe_backup_${deck.id}`;
+      const newBackup = {
+        deckId: deck.id,
+        hardCardIds: weakCardIds,
+        updatedAt: Date.now()
+      };
+      await set(backupKey, newBackup);
+      toast.success(`Đã lưu trạng thái ${weakCardIds.length} thẻ X!`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Lỗi khi sao lưu dữ liệu.");
+    }
+  };
+
   return (
     <div className="relative z-[60]">
       <button
@@ -218,7 +243,7 @@ export const DeckOptionsMenu = ({
               </button>
             )}
 
-            <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 my-1"></div>
+            <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 my-1"></div><button onClick={handleBackup} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-purple-600 dark:text-purple-400 transition-colors cursor-pointer"><Save className="w-4 h-4" /> Lưu snapshot Thẻ X</button>
 
             <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeckMenu(false); handleDownloadJson(false); }}
@@ -227,24 +252,6 @@ export const DeckOptionsMenu = ({
               <FileJson className="w-4 h-4" />
               Tải JSON (Toàn bộ)
             </button>
-            
-            <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowDeckMenu(false); handleDownloadJson(true); }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-purple-600 transition-colors cursor-pointer"
-            >
-              <FileJson className="w-4 h-4" />
-              Tải JSON (Thẻ X)
-            </button>
-
-            {isFeatureEnabled('ENABLE_VIBE_BACKUP_RESTORE_X') && !deck.id.startsWith("remind-later-") && (
-              <div className="px-4 py-2" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                <VibeBackupRestoreX
-                    deckId={deck.id}
-                  deckTitle={deck.title}
-                  cards={deck.cards || []}
-                />
-              </div>
-            )}
           </div>
         </>
       )}

@@ -222,6 +222,7 @@ import {
 } from "../components/TopPerformersWidget";
 import { triggerCelebration } from "../lib/celebration";
 import { VibeClasses } from "../vibe-sandbox/VibeClasses";
+import { VibeStudyEntryModal } from "./VibeStudyEntryModal";
 
 function AnimatedCounter({ value }: { value: number }) {
   const count = useMotionValue(0);
@@ -1515,6 +1516,7 @@ export default function VibeStudentDashboard() {
   const [quizFinished, setQuizFinished] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+  const [studyEntryDeck, setStudyEntryDeck] = useState<Deck | null>(null);
   const [quizQuote] = useState(
     MOTIVATION_QUOTES[Math.floor(Math.random() * MOTIVATION_QUOTES.length)],
   );
